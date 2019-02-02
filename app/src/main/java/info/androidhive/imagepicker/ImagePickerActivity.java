@@ -1,6 +1,7 @@
 package info.androidhive.imagepicker;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -128,7 +129,7 @@ public class ImagePickerActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        Timber.e("onActivityResult: %d | %d", requestCode, UCrop.REQUEST_CROP);
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
@@ -151,6 +152,7 @@ public class ImagePickerActivity extends AppCompatActivity {
                 final Throwable cropError = UCrop.getError(data);
                 Timber.e("crop error: %s", cropError);
                 // TODO - handle crop error
+                setResultCancelled();
                 break;
         }
     }
@@ -172,8 +174,9 @@ public class ImagePickerActivity extends AppCompatActivity {
     }
 
     private void handleUCropResult(Intent data) {
+        Timber.e("handleCropResult: %s", data);
         if (data == null) {
-            Toast.makeText(getApplicationContext(), getString(R.string.msg_error_unable_select_profile_pic), Toast.LENGTH_LONG).show();
+            setResultCancelled();
             return;
         }
         final Uri resultUri = UCrop.getOutput(data);
@@ -183,9 +186,24 @@ public class ImagePickerActivity extends AppCompatActivity {
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
             Timber.e("Bitmap: %s", bitmap);
+            setResultOk(bitmap, resultUri);
         } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), getString(R.string.msg_error_unable_select_profile_pic), Toast.LENGTH_LONG).show();
+            setResultCancelled();
         }
+    }
+
+    private void setResultOk(Bitmap bitmap, Uri imagePath) {
+        Intent intent = new Intent();
+        // intent.putExtra("bitmap", bitmap);
+        intent.putExtra("path", imagePath);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+    }
+
+    private void setResultCancelled() {
+        Intent intent = new Intent();
+        setResult(Activity.RESULT_CANCELED, intent);
+        finish();
     }
 
     private Uri getTempProfileImagePath() {

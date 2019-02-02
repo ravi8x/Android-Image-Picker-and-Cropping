@@ -1,8 +1,12 @@
 package info.androidhive.imagepicker;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +20,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
 
-        loadProfile();
+        loadProfile("https://i.pinimg.com/originals/12/47/54/124754cdb18130f1bbdcd40d2e18208a.jpg");
     }
 
-    private void loadProfile() {
-        GlideApp.with(this).load("https://i.pinimg.com/originals/12/47/54/124754cdb18130f1bbdcd40d2e18208a.jpg")
+    private void loadProfile(String url) {
+        GlideApp.with(this).load(url)
                 .into(imgProfile);
     }
 
@@ -61,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChooseGallerySelected() {
                 Intent intent = new Intent(MainActivity.this, ImagePickerActivity.class);
-                intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_IMAGE_CAPTURE);
+                intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
                 startActivityForResult(intent, REQUEST_IMAGE);
             }
         });
@@ -70,5 +76,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         Timber.e("onActivityResult: %d", resultCode);
+
+        if (requestCode == REQUEST_IMAGE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri uri = data.getParcelableExtra("path");
+                // Bitmap bitmap = data.getParcelableExtra("bitmap");
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                    loadProfile(uri.toString());
+                    Timber.e("uri: %s | bitmap: %s", uri, bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
