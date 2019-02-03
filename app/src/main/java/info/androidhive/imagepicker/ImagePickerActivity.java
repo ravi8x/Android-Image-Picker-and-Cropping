@@ -92,8 +92,6 @@ public class ImagePickerActivity extends AppCompatActivity {
                         if (report.areAllPermissionsGranted()) {
                             fileName = System.currentTimeMillis() + ".jpg";
                             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            Uri uri = getTempProfileImagePath(fileName);
-                            Log.e(TAG, "path: " + uri.toString() + ", " + new File(uri.getPath()).exists());
                             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, getTempProfileImagePath(fileName));
                             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -134,26 +132,33 @@ public class ImagePickerActivity extends AppCompatActivity {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
                     cropImage(getTempProfileImagePath(fileName));
+                } else {
+                    setResultCancelled();
                 }
-
                 break;
             case REQUEST_GALLERY_IMAGE:
                 if (resultCode == RESULT_OK) {
                     Uri imageUri = data.getData();
                     cropImage(imageUri);
+                } else {
+                    setResultCancelled();
                 }
                 break;
             case UCrop.REQUEST_CROP:
                 if (resultCode == RESULT_OK) {
                     handleUCropResult(data);
+                } else {
+                    setResultCancelled();
                 }
                 break;
             case UCrop.RESULT_ERROR:
                 final Throwable cropError = UCrop.getError(data);
                 Log.e(TAG, "crop error: " + cropError);
-                // TODO - handle crop error
                 setResultCancelled();
                 break;
+            default:
+                Log.e(TAG, "default: " + requestCode);
+                setResultCancelled();
         }
     }
 
@@ -199,7 +204,6 @@ public class ImagePickerActivity extends AppCompatActivity {
         File path = new File(getExternalCacheDir(), "camera");
         if (!path.exists()) path.mkdirs();
         File image = new File(path, fileName);
-        // TODO - configure provider path globally
         return getUriForFile(ImagePickerActivity.this, getPackageName() + ".provider", image);
     }
 
@@ -214,6 +218,10 @@ public class ImagePickerActivity extends AppCompatActivity {
         return name;
     }
 
+    /**
+     * Calling this will delete the images from cache directory
+     * useful to clear some memory
+     */
     public static void clearCache(Context context) {
         File path = new File(context.getExternalCacheDir(), "camera");
         if (path.exists() && path.isDirectory()) {
