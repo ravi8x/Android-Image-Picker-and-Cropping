@@ -7,4 +7,5 @@
     <color name="gradient_end">#8e5aeb</color>
     <color name="profile_desc">#D1D1FF</color>
     <color name="bg_meta_container">#000000</color>
+    <color name="profile_default_tint">#e0e0e0</color>
 </resources>

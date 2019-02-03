@@ -6,15 +6,14 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.karumi.dexter.Dexter;
@@ -25,14 +24,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
-
-import timber.log.Timber;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 
 public class ImagePickerActivity extends AppCompatActivity {
+    private static final String TAG = ImagePickerActivity.class.getSimpleName();
     public static final String INTENT_IMAGE_PICKER_OPTION = "image_picker_option";
     public static final int REQUEST_IMAGE_CAPTURE = 0;
     public static final int REQUEST_GALLERY_IMAGE = 1;
@@ -129,7 +126,6 @@ public class ImagePickerActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Timber.e("onActivityResult: %d | %d", requestCode, UCrop.REQUEST_CROP);
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
@@ -150,7 +146,7 @@ public class ImagePickerActivity extends AppCompatActivity {
                 break;
             case UCrop.RESULT_ERROR:
                 final Throwable cropError = UCrop.getError(data);
-                Timber.e("crop error: %s", cropError);
+                Log.e(TAG, "crop error: " + cropError);
                 // TODO - handle crop error
                 setResultCancelled();
                 break;
@@ -174,27 +170,16 @@ public class ImagePickerActivity extends AppCompatActivity {
     }
 
     private void handleUCropResult(Intent data) {
-        Timber.e("handleCropResult: %s", data);
         if (data == null) {
             setResultCancelled();
             return;
         }
         final Uri resultUri = UCrop.getOutput(data);
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
-            Timber.e("Bitmap: %s", bitmap);
-            setResultOk(bitmap, resultUri);
-        } catch (IOException e) {
-            setResultCancelled();
-        }
+        setResultOk(resultUri);
     }
 
-    private void setResultOk(Bitmap bitmap, Uri imagePath) {
+    private void setResultOk(Uri imagePath) {
         Intent intent = new Intent();
-        // intent.putExtra("bitmap", bitmap);
         intent.putExtra("path", imagePath);
         setResult(Activity.RESULT_OK, intent);
         finish();
