@@ -33,6 +33,7 @@ public class ImagePickerActivity extends AppCompatActivity {
     public static final String INTENT_IMAGE_PICKER_OPTION = "image_picker_option";
     public static final int REQUEST_IMAGE_CAPTURE = 0;
     public static final int REQUEST_GALLERY_IMAGE = 1;
+    public static String fileName;
 
     public interface PickerOptionListener {
         void onTakeCameraSelected();
@@ -89,8 +90,11 @@ public class ImagePickerActivity extends AppCompatActivity {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
+                            fileName = System.currentTimeMillis() + ".jpg";
                             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, getTempProfileImagePath());
+                            Uri uri = getTempProfileImagePath(fileName);
+                            Log.e(TAG, "path: " + uri.toString() + ", " + new File(uri.getPath()).exists());
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, getTempProfileImagePath(fileName));
                             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                             }
@@ -129,7 +133,7 @@ public class ImagePickerActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
-                    cropImage(getTempProfileImagePath());
+                    cropImage(getTempProfileImagePath(fileName));
                 }
 
                 break;
@@ -191,12 +195,12 @@ public class ImagePickerActivity extends AppCompatActivity {
         finish();
     }
 
-    private Uri getTempProfileImagePath() {
+    private Uri getTempProfileImagePath(String fileName) {
         File path = new File(getExternalCacheDir(), "camera");
         if (!path.exists()) path.mkdirs();
-        File image = new File(path, "profile_image.jpg");
+        File image = new File(path, fileName);
         // TODO - configure provider path globally
-        return getUriForFile(ImagePickerActivity.this, "info.androidhive.imagepicker.provider", image);
+        return getUriForFile(ImagePickerActivity.this, getPackageName() + ".provider", image);
     }
 
     private static String queryName(ContentResolver resolver, Uri uri) {
@@ -208,5 +212,14 @@ public class ImagePickerActivity extends AppCompatActivity {
         String name = returnCursor.getString(nameIndex);
         returnCursor.close();
         return name;
+    }
+
+    public static void clearCache(Context context) {
+        File path = new File(context.getExternalCacheDir(), "camera");
+        if (path.exists() && path.isDirectory()) {
+            for (File child : path.listFiles()) {
+                child.delete();
+            }
+        }
     }
 }

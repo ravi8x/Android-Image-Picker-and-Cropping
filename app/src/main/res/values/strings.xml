@@ -8,9 +8,6 @@
     <string name="following">following</string>
     <string name="msg_error_unable_select_profile_pic">Unable to set profile image. Please try again!</string>
 
-    <string name="file_provider_path">info.androidhive.imagepicker.provider</string>
-
-
     <!-- font families -->
     <string name="font_family_light">sans-serif-light</string>
     <string name="font_family_medium">sans-serif-medium</string>
