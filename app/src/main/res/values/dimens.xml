@@ -8,4 +8,5 @@
     <dimen name="meta_count">20dp</dimen>
     <dimen name="meta_label">12dp</dimen>
     <dimen name="dimen_40dp">40dp</dimen>
+    <dimen name="ic_plus_width">28dp</dimen>
 </resources>

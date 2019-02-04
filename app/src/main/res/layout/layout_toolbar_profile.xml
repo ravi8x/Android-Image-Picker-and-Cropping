@@ -23,13 +23,13 @@
 
         <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/img_plus"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            app:civ_shadow_radius="1"
+            android:layout_width="@dimen/ic_plus_width"
+            android:layout_height="@dimen/ic_plus_width"
             android:layout_alignBottom="@id/img_profile"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_plus"
-            app:civ_shadow="true" />
+            app:civ_shadow="true"
+            app:civ_shadow_radius="1" />
     </RelativeLayout>
 
     <TextView
