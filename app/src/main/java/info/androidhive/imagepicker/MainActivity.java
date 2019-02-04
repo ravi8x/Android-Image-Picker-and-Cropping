@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadProfile(String url) {
-        Log.d(TAG, "profile image url: " + url);
+        Log.d(TAG, "Image cache path: " + url);
+
         GlideApp.with(this).load(url)
                 .into(imgProfile);
         imgProfile.setColorFilter(ContextCompat.getColor(this, android.R.color.transparent));
@@ -86,18 +87,37 @@ public class MainActivity extends AppCompatActivity {
         ImagePickerActivity.showImagePickerOptions(this, new ImagePickerActivity.PickerOptionListener() {
             @Override
             public void onTakeCameraSelected() {
-                Intent intent = new Intent(MainActivity.this, ImagePickerActivity.class);
-                intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_IMAGE_CAPTURE);
-                startActivityForResult(intent, REQUEST_IMAGE);
+                launchCameraIntent();
             }
 
             @Override
             public void onChooseGallerySelected() {
-                Intent intent = new Intent(MainActivity.this, ImagePickerActivity.class);
-                intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
-                startActivityForResult(intent, REQUEST_IMAGE);
+                launchGalleryIntent();
             }
         });
+    }
+
+    private void launchCameraIntent() {
+        Intent intent = new Intent(MainActivity.this, ImagePickerActivity.class);
+        intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_IMAGE_CAPTURE);
+
+        // setting aspect ratio
+        intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 1); // 16x9, 1x1, 3:4, 3:2
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 1);
+
+        // setting maximum bitmap width and height
+        intent.putExtra(ImagePickerActivity.INTENT_SET_BITMAP_MAX_WIDTH_HEIGHT, true);
+        intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_WIDTH, 1000);
+        intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_HEIGHT, 1000);
+
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+
+    private void launchGalleryIntent() {
+        Intent intent = new Intent(MainActivity.this, ImagePickerActivity.class);
+        intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
+        startActivityForResult(intent, REQUEST_IMAGE);
     }
 
     @Override
@@ -105,9 +125,11 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri uri = data.getParcelableExtra("path");
-                // Bitmap bitmap = data.getParcelableExtra("bitmap");
                 try {
+                    // You can update this bitmap to your server
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+
+                    // loading profile image from local cache
                     loadProfile(uri.toString());
                 } catch (IOException e) {
                     e.printStackTrace();
