@@ -2,17 +2,14 @@ Android Choosing Image from Camera or Gallery with Crop Functionality
 ===================
 Android sample project demonstrating choosing an image from gallery or camera with the cropping functionality.
 
+| [Complete Tutorial](https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/#disqus_thread)      |  [Apk](http://download.androidhive.info/apk/shimmer.apk) | [Video Demo](https://www.youtube.com/watch?v=j-TPBl39rDk)|
+|----------|--------|------|
+
 ![Demo](https://www.androidhive.info/wp-content/uploads/2019/02/android-image-from-gallery-or-camera-with-crop-min.jpg)
 
 uCrop
 ---
 Thanks to [Yalantis](https://github.com/Yalantis) for providing such a beautiful cropping ([uCrop](https://github.com/Yalantis/uCrop)) library. This example uses the uCrop library for cropping functionality.
-
-[Complete Tutorial](https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/#disqus_thread)
-
-[Apk](http://download.androidhive.info/apk/shimmer.apk)
-
-[Video Demo](https://www.youtube.com/watch?v=j-TPBl39rDk)
 
 How to Use
 ===================
@@ -207,4 +204,3 @@ Intent Parameters:
 | INTENT_BITMAP_MAX_HEIGHT   | The maximum height of the cropped image        |
 
 If you want additional options, you can customize the image picker activity.
-
