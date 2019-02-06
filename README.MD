@@ -1,15 +1,24 @@
 Android Choosing Image from Camera or Gallery with Crop Functionality
 ===================
-Android Barcode Reader library using **Google Mobile Vision.** This library is built on top of google mobile vision sample adding improvements and fixing few bugs.
-
-[ ![Download](https://api.bintray.com/packages/androidhive-info/maven/barcode-reader/images/download.svg) ](https://bintray.com/androidhive-info/maven/barcode-reader/_latestVersion)
-[![Example](https://img.shields.io/badge/Example-Movie%20Tickets-green.svg)](https://www.androidhive.info/2017/07/android-implementing-preferences-settings-screen/)
+Android sample project demonstrating choosing an image from gallery or camera with the cropping functionality.
 
 ![Demo](https://www.androidhive.info/wp-content/uploads/2019/02/android-image-from-gallery-or-camera-with-crop-min.jpg)
 
+uCrop
+---
+Thanks to [Yalantis](https://github.com/Yalantis) for providing such a beautiful cropping ([uCrop](https://github.com/Yalantis/uCrop)) library. This example uses the uCrop library for cropping functionality.
+
+[Complete Tutorial](https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/#disqus_thread)
+
+[Apk](http://download.androidhive.info/apk/shimmer.apk)
+
+[Video Demo](https://www.youtube.com/watch?v=j-TPBl39rDk)
+
 How to Use
--------------
-1. Add [file_provider.xml](https://www.androidhive.info/wp-content/uploads/2019/02/android-image-from-gallery-or-camera-with-crop-min.jpg) to your **res -> xml** foler.
+===================
+Follow the below simple steps to add the library into your project.
+
+1. Add [file_provider.xml](https://github.com/ravi8x/Android-Image-Picker-and-Cropping/blob/master/app/src/main/res/xml/file_paths.xml) to your **res -> xml** foler.
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
@@ -18,7 +27,7 @@ How to Use
         path="camera" />
 </paths>
 ```
-2. In AndroidManifext.xml, add **CAMERA**, **DEXTER** and **STORAGE** permissions. Add **UCrop** activity and **FileProvider** paths.
+2. In [AndroidManifext.xml](https://github.com/ravi8x/Android-Image-Picker-and-Cropping/blob/master/app/src/main/AndroidManifest.xml), add **CAMERA**, **DEXTER** and **STORAGE** permissions. Add **UCrop** activity and **FileProvider** paths.
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -76,12 +85,15 @@ How to Use
 5. Add **Dexter** and **uCrop** dependencies to your **app/build.gradle**
 ```gradle
 dependencies {
+    //...
+
     implementation "com.karumi:dexter:5.0.0"
     implementation 'com.github.yalantis:ucrop:2.2.2'
 }
 ```
-6. Add [ImagePickerActivity.java](http://www.google.com) to your project.
-7. Launch ImagePickerActivity on button click by passing required intent data. The cropped image Uri will be received in **onActivityResult** method.
+6. Copy [ImagePickerActivity.java](https://github.com/ravi8x/Android-Image-Picker-and-Cropping/blob/master/app/src/main/java/info/androidhive/imagepicker/ImagePickerActivity.java) to your project.
+
+7. Launch **ImagePickerActivity** by passing required intent data. Once the image is cropped, you can received the path of the cropped image in **onActivityResult** method.
 ```java
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -178,3 +190,21 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+
+Once the **Uri** is received, you can create a bitmap and send to your server or preview on the screen.
+
+Intent Parameters:
+==========
+| Param      | Description |
+| ----------- | ----------- |
+| INTENT_IMAGE_PICKER_OPTION      | To define source of the image Camera or Gallery. The values could be **REQUEST_IMAGE_CAPTURE** or **REQUEST_GALLERY_IMAGE**       |
+| INTENT_LOCK_ASPECT_RATIO   | Pass `true` to lock the aspect ratio. (16x9, 1x1, 3:4, 3:2)       |
+| INTENT_ASPECT_RATIO_X   | Width of aspect ratio (ex: 3)        |
+| INTENT_ASPECT_RATIO_Y   | Height of the aspect ratio (ex: 4)        |
+| INTENT_IMAGE_COMPRESSION_QUALITY   | The image compression quality 0 - 100. The default value is 80        |
+| INTENT_SET_BITMAP_MAX_WIDTH_HEIGHT   | Pass `true` to limit the maximum width and height of the bitmap        |
+| INTENT_BITMAP_MAX_WIDTH   | The maximum width of the cropped image        |
+| INTENT_BITMAP_MAX_HEIGHT   | The maximum height of the cropped image        |
+
+If you want additional options, you can customize the image picker activity.
+
