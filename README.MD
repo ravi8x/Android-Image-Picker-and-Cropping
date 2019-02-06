@@ -2,10 +2,10 @@ Android Choosing Image from Camera or Gallery with Crop Functionality
 ===================
 Android sample project demonstrating choosing an image from gallery or camera with the cropping functionality.
 
+![Demo](https://www.androidhive.info/wp-content/uploads/2019/02/android-image-from-gallery-or-camera-with-crop-min.jpg)
+
 | [Complete Tutorial](https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/#disqus_thread)      |  [Apk](http://download.androidhive.info/apk/shimmer.apk) | [Video Demo](https://www.youtube.com/watch?v=j-TPBl39rDk)|
 |----------|--------|------|
-
-![Demo](https://www.androidhive.info/wp-content/uploads/2019/02/android-image-from-gallery-or-camera-with-crop-min.jpg)
 
 uCrop
 ---
@@ -204,3 +204,13 @@ Intent Parameters:
 | INTENT_BITMAP_MAX_HEIGHT   | The maximum height of the cropped image        |
 
 If you want additional options, you can customize the image picker activity.
+
+Deleting Cached Images:
+==========
+While the image are taken with camera, they will stored in cached directory. You can clear the cached images once the bitmap is utilized.
+```java
+// Clearing older images from cache directory
+// don't call this line if you want to choose multiple images in the same activity
+// call this once the bitmap(s) usage is over
+ImagePickerActivity.clearCache(this);
+```

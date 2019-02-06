@@ -19,4 +19,7 @@
     <string name="font_family_condensed">sans-serif-condensed</string>
     <string name="font_family_black">sans-serif-black</string>
     <string name="font_family_thin">sans-serif-thin</string>
+    <string name="dialog_permission_title">Grant Permissions</string>
+    <string name="dialog_permission_message">This app needs permission to use this feature. You can grant them in app settings.</string>
+    <string name="go_to_settings">GOTO SETTINGS</string>
 </resources>

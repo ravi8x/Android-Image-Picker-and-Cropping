@@ -2,13 +2,16 @@ package info.androidhive.imagepicker;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -45,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(null);
 
         loadProfileDefault();
+
+        // Clearing older images from cache directory
+        // don't call this line if you want to choose multiple images in the same activity
+        // call this once the bitmap(s) usage is over
         ImagePickerActivity.clearCache(this);
     }
 
@@ -71,8 +78,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
                             showImagePickerOptions();
-                        } else {
-                            // TODO - handle permission denied case
+                        }
+
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            showSettingsDialog();
                         }
                     }
 
@@ -141,5 +150,31 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    /**
+     * Showing Alert Dialog with Settings option
+     * Navigates user to app settings
+     * NOTE: Keep proper title and message depending on your app
+     */
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle(getString(R.string.dialog_permission_title));
+        builder.setMessage(getString(R.string.dialog_permission_message));
+        builder.setPositiveButton(getString(R.string.go_to_settings), (dialog, which) -> {
+            dialog.cancel();
+            openSettings();
+        });
+        builder.setNegativeButton(getString(android.R.string.cancel), (dialog, which) -> dialog.cancel());
+        builder.show();
+
+    }
+
+    // navigating user to app settings
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
     }
 }
