@@ -186,6 +186,8 @@ public class ImagePickerActivity extends AppCompatActivity {
         Uri destinationUri = Uri.fromFile(new File(getCacheDir(), queryName(getContentResolver(), sourceUri)));
         UCrop.Options options = new UCrop.Options();
         options.setCompressionQuality(IMAGE_COMPRESSION);
+
+        // applying UI theme
         options.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));
         options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
         options.setActiveWidgetColor(ContextCompat.getColor(this, R.color.colorPrimary));

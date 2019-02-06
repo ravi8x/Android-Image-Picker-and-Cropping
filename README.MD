@@ -1,32 +1,88 @@
-package info.androidhive.imagepicker;
+Android Choosing Image from Camera or Gallery with Crop Functionality
+===================
+Android Barcode Reader library using **Google Mobile Vision.** This library is built on top of google mobile vision sample adding improvements and fixing few bugs.
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.widget.ImageView;
+[ ![Download](https://api.bintray.com/packages/androidhive-info/maven/barcode-reader/images/download.svg) ](https://bintray.com/androidhive-info/maven/barcode-reader/_latestVersion)
+[![Example](https://img.shields.io/badge/Example-Movie%20Tickets-green.svg)](https://www.androidhive.info/2017/07/android-implementing-preferences-settings-screen/)
 
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+![Demo](https://www.androidhive.info/wp-content/uploads/2019/02/android-image-from-gallery-or-camera-with-crop-min.jpg)
 
-import java.io.IOException;
-import java.util.List;
+How to Use
+-------------
+1. Add [file_provider.xml](https://www.androidhive.info/wp-content/uploads/2019/02/android-image-from-gallery-or-camera-with-crop-min.jpg) to your **res -> xml** foler.
+```
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-cache-path
+        name="cache"
+        path="camera" />
+</paths>
+```
+2. In AndroidManifext.xml, add **CAMERA**, **DEXTER** and **STORAGE** permissions. Add **UCrop** activity and **FileProvider** paths.
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="info.androidhive.imagepicker">
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Image Picker activity -->
+        <activity android:name=".ImagePickerActivity" />
+
+        <!-- uCrop cropping activity -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- cache directory file provider paths -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
+</manifest>
+```
+5. Add **Dexter** and **uCrop** dependencies to your **app/build.gradle**
+```gradle
+dependencies {
+    implementation "com.karumi:dexter:5.0.0"
+    implementation 'com.github.yalantis:ucrop:2.2.2'
+}
+```
+6. Add [ImagePickerActivity.java](http://www.google.com) to your project.
+7. Launch ImagePickerActivity on button click by passing required intent data. The cropped image Uri will be received in **onActivityResult** method.
+```java
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final int REQUEST_IMAGE = 100;
@@ -38,31 +94,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(null);
-
-        loadProfileDefault();
-        ImagePickerActivity.clearCache(this);
     }
 
-    private void loadProfile(String url) {
-        Log.d(TAG, "Image cache path: " + url);
-
-        GlideApp.with(this).load(url)
-                .into(imgProfile);
-        imgProfile.setColorFilter(ContextCompat.getColor(this, android.R.color.transparent));
-    }
-
-    private void loadProfileDefault() {
-        GlideApp.with(this).load(R.drawable.baseline_account_circle_black_48)
-                .into(imgProfile);
-        imgProfile.setColorFilter(ContextCompat.getColor(this, R.color.profile_default_tint));
-    }
-
-    @OnClick({R.id.img_plus, R.id.img_profile})
+    // my button click function
     void onProfileImageClick() {
         Dexter.withActivity(this)
                 .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -143,3 +177,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+```
