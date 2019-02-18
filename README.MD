@@ -4,7 +4,7 @@ Android sample project demonstrating choosing an image from gallery or camera wi
 
 ![Demo](https://www.androidhive.info/wp-content/uploads/2019/02/android-image-from-gallery-or-camera-with-crop-min.jpg)
 
-| [Complete Tutorial](https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/#disqus_thread)      |  [Apk](http://download.androidhive.info/apk/shimmer.apk) | [Video Demo](https://www.youtube.com/watch?v=j-TPBl39rDk)|
+| [Complete Tutorial](https://www.androidhive.info/2019/02/android-choosing-image-camera-gallery-crop-functionality/)      |  [Apk](http://download.androidhive.info/apk/image-pick-crop.apk) | [Video Demo](https://www.youtube.com/watch?v=8CgZd1d9ujc)|
 |----------|--------|------|
 
 uCrop
