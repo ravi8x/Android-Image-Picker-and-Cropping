@@ -79,13 +79,22 @@ Follow the below simple steps to add the library into your project.
 
 </manifest>
 ```
-5. Add **Dexter** and **uCrop** dependencies to your **app/build.gradle**
+5a. Add **Jitpack** for **uCrop** dependencies to your **build.gradle**
+```gradle
+allprojects {
+   repositories {
+      jcenter()
+      maven { url "https://jitpack.io" }
+   }
+}
+```
+5b. Add **Dexter** and **uCrop** dependencies to your **app/build.gradle**
 ```gradle
 dependencies {
     //...
 
     implementation "com.karumi:dexter:5.0.0"
-    implementation 'com.github.yalantis:ucrop:2.2.2'
+    implementation 'com.github.yalantis:ucrop:2.2.3'
 }
 ```
 6. Copy [ImagePickerActivity.java](https://github.com/ravi8x/Android-Image-Picker-and-Cropping/blob/master/app/src/main/java/info/androidhive/imagepicker/ImagePickerActivity.java) to your project.
